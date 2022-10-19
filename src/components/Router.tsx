@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import routerContext from '../store/RouterContext'
 
 interface RouterProps {
@@ -17,6 +17,16 @@ const Router = ({ children }: RouterProps) => {
     pathname,
     changePathname: changePathname,
   }
+
+  useEffect(() => {
+    const onPathChange = () => setPathname(location.pathname)
+
+    window.addEventListener('popstate', onPathChange)
+
+    return () => {
+      window.removeEventListener('popstate', onPathChange)
+    }
+  }, [])
 
   const currentRoute = React.Children.toArray(children).find(
     (e) => (e as ReactElement).props.path === pathname
